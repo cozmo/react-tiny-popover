@@ -123,19 +123,10 @@ const PopoverInternal = forwardRef(
       isOpen,
       padding,
       popoverRef,
-      popoverState.align,
-      popoverState.childRect,
-      popoverState.padding,
-      popoverState.popoverRect.height,
-      popoverState.popoverRect.width,
+      popoverState,
       positionPopover,
       positions,
-      prev.boundaryElement,
-      prev.boundaryInset,
-      prev.positions,
-      prev.reposition,
-      prev.transform,
-      prev.transformMode,
+      prev,
       reposition,
       transform,
       transformMode,
@@ -177,17 +168,18 @@ const PopoverInternal = forwardRef(
     }, [positionPopover]);
 
     useEffect(() => {
+      if (!isOpen) return;
+
       const body = parentElement.ownerDocument.body;
+
       body.addEventListener('click', handleOnClickOutside, clickOutsideCapture);
-      body.addEventListener('contextmenu', handleOnClickOutside, clickOutsideCapture);
-      body.addEventListener('resize', handleWindowResize);
+      window.addEventListener('resize', handleWindowResize);
 
       return () => {
         body.removeEventListener('click', handleOnClickOutside, clickOutsideCapture);
-        body.removeEventListener('contextmenu', handleOnClickOutside, clickOutsideCapture);
-        body.removeEventListener('resize', handleWindowResize);
+        window.removeEventListener('resize', handleWindowResize);
       };
-    }, [clickOutsideCapture, handleOnClickOutside, handleWindowResize, parentElement]);
+    }, [isOpen, handleOnClickOutside, handleWindowResize, clickOutsideCapture, parentElement]);
 
     const handleRef = useCallback(
       (node: HTMLElement) => {
